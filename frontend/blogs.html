@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Dashboard — For Us</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="app.js" defer></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --ink-card: #181818;
+    --paper: #f5f0e8;
+    --accent: #c8976a;
+    --accent-hover: #d9a87a;
+    --muted: #6b6560;
+    --rule: rgba(200,151,106,0.2);
+    --error: #e07070;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--paper);
+    min-height: 100vh;
+  }
+
+  /* ── Nav ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(13,13,13,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .nav-user {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .nav-user span { color: var(--paper); font-weight: 500; }
+
+  /* People nav button with badge */
+  .btn-people {
+    position: relative;
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-people:hover { border-color: var(--accent); color: var(--accent); }
+
+  #pending-badge {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: var(--accent);
+    color: var(--ink);
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .btn-logout {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid rgba(245,240,232,0.15);
+    border-radius: 3px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-logout:hover { border-color: var(--error); color: var(--error); }
+
+  /* ── Layout ── */
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 48px;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  /* ── Composer ── */
+  .composer {
+    position: sticky;
+    top: 88px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  .composer-header { margin-bottom: 28px; }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .composer-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1.15;
+  }
+
+  .field { margin-bottom: 18px; }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 9px;
+  }
+
+  .field input, .field textarea {
+    width: 100%;
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.10);
+    border-radius: 3px;
+    color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    resize: none;
+  }
+
+  .field input { padding: 13px 16px; }
+  .field textarea { padding: 13px 16px; height: 160px; line-height: 1.65; }
+  .field input::placeholder, .field textarea::placeholder { color: rgba(245,240,232,0.18); }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--accent);
+    background: rgba(200,151,106,0.05);
+  }
+
+  .field-meta {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 6px;
+    font-size: 11px;
+    color: rgba(107,101,96,0.5);
+  }
+
+  .btn-post {
+    width: 100%;
+    padding: 15px 24px;
+    background: var(--accent);
+    color: var(--ink);
+    border: none;
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 4px;
+  }
+
+  .btn-post:hover { background: var(--accent-hover); }
+  .btn-post:active { transform: scale(0.99); }
+  .btn-post .arrow { transition: transform 0.2s; }
+  .btn-post:hover .arrow { transform: translateX(4px); }
+  .btn-post.loading { opacity: 0.65; pointer-events: none; }
+
+  /* ── Feed ── */
+  .feed { opacity: 0; animation: fadeUp 0.6s 0.35s forwards; }
+
+  .feed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .feed-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .btn-refresh {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
+  .refresh-icon { font-size: 14px; display: inline-block; transition: transform 0.4s; }
+  .btn-refresh:hover .refresh-icon { transform: rotate(180deg); }
+
+  /* ── Blog cards ── */
+  #blogs { display: flex; flex-direction: column; gap: 2px; }
+
+  .blog-card {
+    background: var(--ink-card);
+    border: 1px solid rgba(245,240,232,0.06);
+    border-radius: 4px;
+    padding: 28px 32px;
+    transition: border-color 0.2s, transform 0.2s;
+    opacity: 0;
+    animation: fadeUp 0.5s forwards;
+  }
+
+  .blog-card:hover { border-color: var(--rule); transform: translateY(-2px); }
+
+  .blog-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .blog-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .blog-author { font-size: 12px; font-weight: 500; color: var(--paper); letter-spacing: 0.04em; }
+  .blog-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+  .blog-date { font-size: 11px; color: var(--muted); }
+
+  .blog-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+
+  .blog-card p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── States ── */
+  .state-msg {
+    text-align: center;
+    padding: 64px 32px;
+    color: var(--muted);
+    font-size: 14px;
+    border: 1px dashed rgba(245,240,232,0.08);
+    border-radius: 4px;
+  }
+
+  .state-msg .state-icon {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-style: italic;
+    color: rgba(200,151,106,0.3);
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    padding: 14px 22px;
+    background: var(--ink-card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--paper);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(12px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { border-color: rgba(122,184,122,0.4); color: #7ab87a; }
+  .toast.error   { border-color: rgba(224,112,112,0.4); color: var(--error); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 860px) {
+    .page { grid-template-columns: 1fr; gap: 40px; }
+    .composer { position: static; }
+    .nav { padding: 0 24px; }
+    .page { padding: 40px 24px; }
+  }
+</style>
+</head>
+
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">For Us</a>
+    <div class="nav-right">
+      <span class="nav-user">Writing as <span id="nav-username">—</span></span>
+      <a href="people.html" class="btn-people">
+        People
+        <span id="pending-badge">0</span>
+      </a>
+      <button class="btn-logout" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <aside class="composer">
+      <div class="composer-header">
+        <p class="eyebrow">New memory</p>
+        <h2>Write something<br>worth keeping.</h2>
+      </div>
+
+      
+
+      <div class="field">
+        <label for="content">Memory</label>
+        <textarea id="content" placeholder="What happened, how it felt…"
+                  oninput="updateCounter('content','content-count',1000)"></textarea>
+        <div class="field-meta"><span id="content-count">0 / 1000</span></div>
+      </div>
+
+      <button class="btn-post" onclick="createBlog()">
+        <span>Save memory</span>
+        <span class="arrow">→</span>
+      </button>
+    </aside>
+
+    <main class="feed">
+      <div class="feed-header">
+        <h3>Our Memories</h3>
+        <button class="btn-refresh" onclick="loadBlogs()">
+          <span class="refresh-icon">↻</span> Refresh
+        </button>
+      </div>
+      <div id="blogs">
+        <div class="state-msg">
+          <span class="state-icon">…</span>
+          Loading memories
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function updateCounter(inputId, counterId, max) {
+      const len = document.getElementById(inputId).value.length
+      document.getElementById(counterId).textContent = `${len} / ${max}`
+    }
+
+    function initUsername() {
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) return
+        const payload = JSON.parse(atob(token.split('.')[1]))
+        if (payload.username)
+          document.getElementById('nav-username').textContent = payload.username
+      } catch(e) {}
+    }
+
+    initUsername()
+
+    window.addEventListener('load', () => {
+      loadBlogs()
+      loadPendingBadge()
+    })
+  </script>
+
+</body>
+</html>

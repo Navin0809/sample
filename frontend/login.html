@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Sign In — For Us — A Place for memories</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="app.js" defer></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --accent: #c8976a;
+    --accent-hover: #d9a87a;
+    --muted: #6b6560;
+    --rule: rgba(200,151,106,0.25);
+    --error: #e07070;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--paper);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ── Ambient background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 20%, rgba(200,151,106,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 80% 80%, rgba(200,151,106,0.05) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px,
+        rgba(200,151,106,0.04) 39px, rgba(200,151,106,0.04) 40px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Card ── */
+  .card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    padding: 52px 48px;
+    background: rgba(22, 20, 18, 0.85);
+    border: 1px solid rgba(200,151,106,0.15);
+    border-radius: 6px;
+    backdrop-filter: blur(20px);
+    box-shadow:
+      0 32px 80px rgba(0,0,0,0.5),
+      0 0 0 1px rgba(255,255,255,0.03) inset;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: rise 0.65s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+  }
+
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Logo ── */
+  .logo {
+    display: block;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+  }
+
+  /* ── Header ── */
+  .card-header {
+    text-align: center;
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.4s forwards;
+  }
+
+  .card-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .card-header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .card-header p {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--muted);
+  }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--rule);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: rise 0.5s ease 0.45s forwards;
+  }
+
+  /* ── Fields ── */
+  .fields {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 10px;
+    opacity: 0;
+    animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+  }
+
+  .field { position: relative; }
+
+  .field label {
+    display: block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 9px;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.10);
+    border-radius: 4px;
+    color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+
+  .field input::placeholder { color: rgba(245,240,232,0.18); }
+
+  .field input:focus {
+    border-color: var(--accent);
+    background: rgba(200,151,106,0.06);
+    box-shadow: 0 0 0 3px rgba(200,151,106,0.08);
+  }
+
+  /* password toggle */
+  .pw-wrap { position: relative; }
+  .pw-wrap input { padding-right: 52px; }
+
+  .pw-eye {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 6px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    font-family: 'DM Sans', sans-serif;
+    transition: color 0.2s;
+  }
+  .pw-eye:hover { color: var(--accent); }
+
+  /* ── Error ── */
+  #error-msg {
+    display: none;
+    text-align: center;
+    font-size: 13px;
+    color: var(--error);
+    padding: 11px 16px;
+    border: 1px solid rgba(224,112,112,0.2);
+    border-radius: 4px;
+    background: rgba(224,112,112,0.05);
+    margin-top: 18px;
+  }
+  #error-msg.visible { display: block; }
+
+  /* ── Submit ── */
+  .btn-submit {
+    width: 100%;
+    margin-top: 24px;
+    padding: 16px;
+    background: var(--accent);
+    color: var(--ink);
+    border: none;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    opacity: 0;
+    animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) 0.55s forwards;
+  }
+
+  .btn-submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .btn-submit:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 8px 24px rgba(200,151,106,0.25);
+  }
+
+  .btn-submit:active { transform: scale(0.99); }
+  .btn-submit.loading { opacity: 0.65; pointer-events: none; }
+
+  /* ── Footer ── */
+  .card-footer {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    opacity: 0;
+    animation: rise 0.5s ease 0.6s forwards;
+  }
+
+  .card-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+
+  .card-footer a:hover { opacity: 0.7; }
+
+  /* ── Corner decoration ── */
+  .corner {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+  }
+  .corner-tl { top: 16px; left: 16px; border-top: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+  .corner-br { bottom: 16px; right: 16px; border-bottom: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+</style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <!-- Corner accents -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-br"></div>
+
+    <a href="index.html" class="logo">For Us — A Place for memories</a>
+
+    <div class="card-header">
+      <h1>Welcome<br><em>back.</em></h1>
+      <p>Sign in to continue writing</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="fields">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" type="text" placeholder="your_username" autocomplete="username">
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="pw-wrap">
+          <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+          <button class="pw-eye" type="button" onclick="togglePw()" id="pw-btn">show</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="error-msg"></div>
+
+    <button class="btn-submit" onclick="login()">Sign in →</button>
+
+    <div class="card-footer">
+      No account yet? <a href="register.html">Create one</a>
+    </div>
+
+  </div>
+
+  <script>
+    function togglePw() {
+      const input = document.getElementById('password')
+      const btn   = document.getElementById('pw-btn')
+      const hide  = input.type === 'password'
+      input.type  = hide ? 'text' : 'password'
+      btn.textContent = hide ? 'hide' : 'show'
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('error-msg')
+      el.textContent = msg
+      el.classList.add('visible')
+    }
+  </script>
+
+</body>
+</html>

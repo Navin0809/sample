@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Create Account — Inkwell</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="app.js" defer></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --accent: #c8976a;
+    --accent-hover: #d9a87a;
+    --muted: #6b6560;
+    --rule: rgba(200,151,106,0.25);
+    --error: #e07070;
+    --success: #7ab87a;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--paper);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* ── Left decorative panel ── */
+  .panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 52px 56px;
+    border-right: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 70% 30%, rgba(200,151,106,0.10) 0%, transparent 65%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(200,151,106,0.05) 39px, rgba(200,151,106,0.05) 40px);
+    pointer-events: none;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeUp 0.5s 0.1s forwards;
+  }
+
+  .panel-center {
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s forwards;
+  }
+
+  .panel-center h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 3.5vw, 50px);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 28px;
+  }
+
+  .panel-center h2 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .perks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .perks li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .perks li .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .panel-bottom {
+    opacity: 0;
+    animation: fadeUp 0.6s 0.5s forwards;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+  }
+
+  /* ── Right form panel ── */
+  .form-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 52px 64px;
+    opacity: 0;
+    animation: fadeIn 0.7s 0.4s forwards;
+  }
+
+  .form-header {
+    margin-bottom: 40px;
+  }
+
+  .form-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .form-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  /* ── Fields ── */
+  .field {
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .field label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .field label .hint {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: none;
+    color: rgba(107,101,96,0.6);
+    font-weight: 300;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 15px 18px;
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.12);
+    border-radius: 3px;
+    color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .field input::placeholder { color: rgba(245,240,232,0.2); }
+  .field input:focus {
+    border-color: var(--accent);
+    background: rgba(200,151,106,0.06);
+  }
+
+  .field input.valid   { border-color: var(--success); }
+  .field input.invalid { border-color: var(--error); }
+
+  /* password toggle */
+  .field-pw { position: relative; }
+  .field-pw input { padding-right: 48px; }
+  .pw-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .pw-toggle:hover { color: var(--accent); }
+
+  /* strength bar */
+  .strength-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .strength-bar span {
+    flex: 1;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(245,240,232,0.08);
+    transition: background 0.3s;
+  }
+  .strength-bar.s1 span:nth-child(1) { background: var(--error); }
+  .strength-bar.s2 span:nth-child(-n+2) { background: var(--accent); }
+  .strength-bar.s3 span { background: var(--success); }
+
+  /* ── Feedback messages ── */
+  #error-msg, #success-msg {
+    display: none;
+    font-size: 13px;
+    margin-bottom: 18px;
+    padding: 12px 16px;
+    border-radius: 3px;
+  }
+
+  #error-msg {
+    color: var(--error);
+    border: 1px solid rgba(224,112,112,0.25);
+    background: rgba(224,112,112,0.06);
+  }
+
+  #success-msg {
+    color: var(--success);
+    border: 1px solid rgba(122,184,122,0.25);
+    background: rgba(122,184,122,0.06);
+  }
+
+  #error-msg.visible   { display: block; }
+  #success-msg.visible { display: block; }
+
+  /* ── Submit button ── */
+  .btn-submit {
+    width: 100%;
+    padding: 17px 28px;
+    background: var(--accent);
+    color: var(--ink);
+    border: none;
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-submit:hover { background: var(--accent-hover); }
+  .btn-submit:active { transform: scale(0.99); }
+  .btn-submit .arrow { transition: transform 0.2s; }
+  .btn-submit:hover .arrow { transform: translateX(4px); }
+  .btn-submit.loading { opacity: 0.7; pointer-events: none; }
+
+  /* ── Footer link ── */
+  .form-footer {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .form-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+
+  .form-footer a:hover { opacity: 0.75; }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    body { grid-template-columns: 1fr; }
+    .panel { display: none; }
+    .form-side { padding: 52px 32px; min-height: 100vh; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- Left decorative panel -->
+  <div class="panel">
+    <a href="index.html" class="logo">Inkwell</a>
+
+    <div class="panel-center">
+      <h2>Start your<br><em>story</em><br>today.</h2>
+      <ul class="perks">
+        <li><span class="dot"></span>Publish instantly — no editorial gatekeeping</li>
+        <li><span class="dot"></span>Your writing, your voice, your audience</li>
+        <li><span class="dot"></span>Free forever, no hidden tiers</li>
+      </ul>
+    </div>
+
+    <div class="panel-bottom">
+      Joining thousands of writers who chose<br>
+      to share what they think.
+    </div>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="form-side">
+
+    <div class="form-header">
+      <p class="form-eyebrow">Join Inkwell</p>
+      <h2>Create your<br>account</h2>
+    </div>
+
+    <div id="error-msg"></div>
+    <div id="success-msg"></div>
+
+    <div class="field">
+      <label for="username">
+        Username
+        <span class="hint">Letters, numbers, underscores</span>
+      </label>
+      <input id="username" type="text" placeholder="your_username" autocomplete="username"
+             oninput="validateUsername(this)">
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="field-pw">
+        <input id="password" type="password" placeholder="••••••••" autocomplete="new-password"
+               oninput="checkStrength(this.value)">
+        <button class="pw-toggle" onclick="togglePw()" type="button" id="pw-btn">show</button>
+      </div>
+      <div class="strength-bar" id="strength-bar">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="register()">
+      <span>Create account</span>
+      <span class="arrow">→</span>
+    </button>
+
+    <div class="form-footer">
+      Already have an account? <a href="login.html">Sign in</a>
+    </div>
+
+  </div>
+
+  <script>
+    function togglePw() {
+      const input = document.getElementById('password');
+      const btn   = document.getElementById('pw-btn');
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.textContent = isHidden ? 'hide' : 'show';
+    }
+
+    function checkStrength(val) {
+      const bar = document.getElementById('strength-bar');
+      bar.className = 'strength-bar';
+      if (!val) return;
+      const strong = val.length >= 8 && /[^a-zA-Z0-9]/.test(val);
+      const medium = val.length >= 6;
+      if (strong)       bar.classList.add('s3');
+      else if (medium)  bar.classList.add('s2');
+      else              bar.classList.add('s1');
+    }
+
+    function validateUsername(input) {
+      const valid = /^[a-zA-Z0-9_]+$/.test(input.value) && input.value.length >= 3;
+      input.classList.toggle('valid',   input.value.length > 0 && valid);
+      input.classList.toggle('invalid', input.value.length > 0 && !valid);
+    }
+
+    function showError(msg) {
+      document.getElementById('success-msg').classList.remove('visible');
+      const el = document.getElementById('error-msg');
+      el.textContent = msg;
+      el.classList.add('visible');
+    }
+
+    function showSuccess(msg) {
+      document.getElementById('error-msg').classList.remove('visible');
+      const el = document.getElementById('success-msg');
+      el.textContent = msg;
+      el.classList.add('visible');
+    }
+  </script>
+
+</body>
+</html>

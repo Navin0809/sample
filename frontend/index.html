@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>For Us — A Place for memories</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --accent: #c8976a;
+    --muted: #6b6560;
+    --rule: rgba(200,151,106,0.3);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--paper);
+    height: 100vh;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* ── Left panel ── */
+  .left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 52px 56px;
+    border-right: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  .left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 80%, rgba(200,151,106,0.12) 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(200,151,106,0.06) 39px, rgba(200,151,106,0.06) 40px);
+    pointer-events: none;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s forwards;
+  }
+
+  .headline {
+    opacity: 0;
+    animation: fadeUp 0.7s 0.3s forwards;
+  }
+
+  .headline h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 6vw, 84px);
+    line-height: 1.0;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .headline h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .headline p {
+    margin-top: 24px;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 340px;
+    line-height: 1.7;
+  }
+
+  .stats {
+    display: flex;
+    gap: 40px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+
+  .stat-item span {
+    display: block;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── Right panel ── */
+  .right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 52px 64px;
+    gap: 0;
+    opacity: 0;
+    animation: fadeIn 0.8s 0.5s forwards;
+  }
+
+  .tagline {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 48px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .action-label {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 18px 28px;
+    border: none;
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.25s ease;
+    margin-bottom: 14px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '→';
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%) translateX(6px);
+    opacity: 0;
+    transition: all 0.25s ease;
+  }
+
+  .btn:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--ink);
+  }
+
+  .btn-primary:hover { background: #d9a87a; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--paper);
+    border: 1px solid rgba(245,240,232,0.2);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 8px 0 14px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .footer-note {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    body { grid-template-columns: 1fr; overflow: auto; height: auto; }
+    .left { padding: 48px 32px 40px; border-right: none; border-bottom: 1px solid var(--rule); }
+    .right { padding: 40px 32px 56px; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- Left: Branding -->
+  <div class="left">
+    <div class="logo">For Us — A Place for memories</div>
+
+    <div class="headline">
+      <h1>Words<br>that <em>matter.</em></h1>
+      <p>A publishing platform for thinkers, writers, and storytellers. Share your ideas with the world.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Stories</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">Free</span>
+        <span class="stat-label">Always</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">Yours</span>
+        <span class="stat-label">Forever</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: CTA -->
+  <div class="right">
+    <div class="tagline">Get started today</div>
+
+    <div class="action-label">New here?</div>
+    <button class="btn btn-primary" onclick="goRegister()">Create your account</button>
+
+    <div class="divider">or</div>
+
+    <div class="action-label">Welcome back</div>
+    <button class="btn btn-secondary" onclick="goLogin()">Sign in to continue</button>
+
+    <div class="footer-note">
+      By joining, you agree to write things worth reading.<br>
+      No spam. No noise. Just good writing.
+    </div>
+  </div>
+
+</body>
+
+<script>
+  const token = localStorage.getItem("token")
+  if(token){ window.location.href = "blogs.html" }
+
+  function goLogin(){ window.location.href = "login.html" }
+  function goRegister(){ window.location.href = "register.html" }
+</script>
+
+</html>

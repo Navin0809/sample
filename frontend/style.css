@@ -1,0 +1,126 @@
+/* =============================================
+   Inkwell — Global Base Styles
+   All page-specific styles live in each HTML file.
+   This file provides shared resets and fallbacks.
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Design tokens ── */
+:root {
+  --ink:          #0d0d0d;
+  --ink-card:     #181818;
+  --paper:        #f5f0e8;
+  --accent:       #c8976a;
+  --accent-hover: #d9a87a;
+  --muted:        #6b6560;
+  --rule:         rgba(200, 151, 106, 0.25);
+  --error:        #e07070;
+  --success:      #7ab87a;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', Arial, sans-serif;
+
+  --radius:       3px;
+  --transition:   0.2s ease;
+}
+
+/* ── Base ── */
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--paper);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--paper);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity var(--transition);
+}
+
+a:hover { opacity: 0.75; }
+
+p {
+  font-weight: 300;
+  color: var(--muted);
+}
+
+/* ── Shared form elements (fallback) ── */
+input, textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(245, 240, 232, 0.04);
+  border: 1px solid rgba(245, 240, 232, 0.12);
+  border-radius: var(--radius);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  outline: none;
+  transition: border-color var(--transition), background var(--transition);
+  resize: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(245, 240, 232, 0.2);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--accent);
+  background: rgba(200, 151, 106, 0.06);
+}
+
+/* ── Shared button (fallback) ── */
+button {
+  padding: 14px 24px;
+  background: var(--accent);
+  color: var(--ink);
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background var(--transition), transform 0.15s;
+}
+
+button:hover  { background: var(--accent-hover); }
+button:active { transform: scale(0.99); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: rgba(200,151,106,0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── Selection ── */
+::selection {
+  background: rgba(200, 151, 106, 0.3);
+  color: var(--paper);
+}

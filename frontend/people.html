@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>People — For Us</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="app.js" defer></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --ink-card: #181818;
+    --paper: #f5f0e8;
+    --accent: #c8976a;
+    --accent-hover: #d9a87a;
+    --muted: #6b6560;
+    --rule: rgba(200,151,106,0.2);
+    --error: #e07070;
+    --success: #7ab87a;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--paper);
+    min-height: 100vh;
+  }
+
+  /* ── Nav ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(13,13,13,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+
+  .btn-back {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-logout {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1px solid rgba(245,240,232,0.15);
+    border-radius: 3px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-logout:hover { border-color: var(--error); color: var(--error); }
+
+  /* ── Page ── */
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 56px 48px;
+  }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.6s forwards;
+  }
+
+  .section:nth-child(2) { animation-delay: 0.15s; }
+
+  .section-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .section-count {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── User cards ── */
+  #users-list, #pending-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+    background: var(--ink-card);
+    border: 1px solid rgba(245,240,232,0.06);
+    border-radius: 4px;
+    transition: border-color 0.2s;
+    opacity: 0;
+    animation: fadeUp 0.4s forwards;
+  }
+
+  .user-card:hover { border-color: var(--rule); }
+
+  .user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #a0705a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .user-name {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--paper);
+  }
+
+  .user-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* ── Connect buttons ── */
+  .btn-connect {
+    padding: 7px 16px;
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.2s;
+  }
+
+  .btn-connect:not(.accept):not(.reject) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  .btn-connect:not(.accept):not(.reject):hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  .btn-connect.accept {
+    background: transparent;
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  .btn-connect.accept:hover {
+    background: rgba(122,184,122,0.1);
+  }
+
+  .btn-connect.reject {
+    background: transparent;
+    border-color: rgba(224,112,112,0.4);
+    color: var(--error);
+  }
+
+  .btn-connect.reject:hover {
+    background: rgba(224,112,112,0.08);
+  }
+
+  /* ── Status badges ── */
+  .conn-badge {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .conn-badge.pending  { background: rgba(200,151,106,0.1); color: var(--accent); border: 1px solid rgba(200,151,106,0.2); }
+  .conn-badge.accepted { background: rgba(122,184,122,0.1); color: var(--success); border: 1px solid rgba(122,184,122,0.2); }
+  .conn-badge.rejected { background: rgba(107,101,96,0.1);  color: var(--muted);   border: 1px solid rgba(107,101,96,0.2); }
+
+  /* ── States ── */
+  .state-msg {
+    text-align: center;
+    padding: 40px 32px;
+    color: var(--muted);
+    font-size: 14px;
+    border: 1px dashed rgba(245,240,232,0.08);
+    border-radius: 4px;
+  }
+
+  .state-msg .state-icon {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-style: italic;
+    color: rgba(200,151,106,0.3);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    padding: 14px 22px;
+    background: var(--ink-card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--paper);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(12px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { border-color: rgba(122,184,122,0.4); color: var(--success); }
+  .toast.error   { border-color: rgba(224,112,112,0.4); color: var(--error); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .nav { padding: 0 24px; }
+    .page { padding: 40px 24px; }
+  }
+</style>
+</head>
+
+<body>
+
+  <nav class="nav">
+    <a href="blogs.html" class="nav-logo">For Us</a>
+    <div class="nav-right">
+      <a href="blogs.html" class="btn-back">← Memories</a>
+      <button class="btn-logout" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- Incoming requests -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Requests</h2>
+        <span class="section-count" id="pending-count"></span>
+      </div>
+      <div id="pending-list">
+        <div class="state-msg">
+          <span class="state-icon">…</span>
+          Loading
+        </div>
+      </div>
+    </div>
+
+    <!-- All users -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Everyone</h2>
+      </div>
+      <div id="users-list">
+        <div class="state-msg">
+          <span class="state-icon">…</span>
+          Loading
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Redirect if not logged in
+    if (!localStorage.getItem('token')) {
+      window.location.href = 'login.html'
+    }
+
+    // Load pending requests separately into their own section
+    async function loadPendingSection() {
+      const container = document.getElementById('pending-list')
+      const countEl   = document.getElementById('pending-count')
+      try {
+        const res      = await fetch(API + '/connect/pending', {
+          headers: { 'Authorization': 'Bearer ' + getToken() }
+        })
+        const requests = await res.json()
+
+        countEl.textContent = requests.length ? `${requests.length} pending` : ''
+
+        if (!requests.length) {
+          container.innerHTML = `
+            <div class="state-msg">
+              <span class="state-icon">✦</span>
+              No pending requests
+            </div>`
+          return
+        }
+
+        container.innerHTML = requests.map((r, i) => {
+          const initials = r.from.slice(0, 2).toUpperCase()
+          return `
+            <div class="user-card" style="animation-delay:${i * 50}ms">
+              <div class="user-avatar">${initials}</div>
+              <span class="user-name">${r.from}</span>
+              <div class="user-actions">
+                <button class="btn-connect accept" onclick="respondRequest('${r.from}','accepted')">Accept</button>
+                <button class="btn-connect reject"  onclick="respondRequest('${r.from}','rejected')">Decline</button>
+              </div>
+            </div>`
+        }).join('')
+      } catch {
+        container.innerHTML = `<div class="state-msg"><span class="state-icon">∅</span>Could not load requests.</div>`
+      }
+    }
+
+    // Override respondRequest to refresh both sections
+    async function respondRequest(from, action) {
+      try {
+        const res  = await fetch(API + '/connect/respond', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getToken()
+          },
+          body: JSON.stringify({ from, action })
+        })
+        const data = await res.json()
+        showToast(data.message, res.ok ? 'success' : 'error')
+        if (res.ok) {
+          loadPendingSection()
+          loadUsers()
+        }
+      } catch {
+        showToast('Could not reach the server.', 'error')
+      }
+    }
+
+    window.addEventListener('load', () => {
+      loadPendingSection()
+      loadUsers()
+    })
+  </script>
+
+</body>
+</html>
