@@ -395,7 +395,12 @@
         <h2>Write something<br>worth keeping.</h2>
       </div>
 
-      
+      <div class="field">
+        <label for="title">Title</label>
+        <input id="title" placeholder="Give it a name…" maxlength="120"
+               oninput="updateCounter('title','title-count',120)">
+        <div class="field-meta"><span id="title-count">0 / 120</span></div>
+      </div>
 
       <div class="field">
         <label for="content">Memory</label>
