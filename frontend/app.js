@@ -1,5 +1,5 @@
-const API = "http://localhost:3000"
-const SOCKET_URL = "http://localhost:3000"
+const API = "http://18.60.156.156:3000"
+const SOCKET_URL = "http://18.60.156.156:3000"
 
 let socket = null
 let currentChat = null  // username of currently open conversation
@@ -11,7 +11,7 @@ function getToken()       { return localStorage.getItem("token") }
 /* ── UI helpers ── */
 function showToast(msg, type = "success") {
   const t = document.getElementById("toast")
-  if (!t) return
+  if (!t) dddd
   t.textContent = msg
   t.className = `toast ${type} show`
   setTimeout(() => t.classList.remove("show"), 3000)
